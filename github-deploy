@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3.3
 """
 Github auto deploy server
 
@@ -17,6 +17,7 @@ import logging
 import logging.handlers
 import cgi
 import pwd
+import ipaddress
 
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from subprocess import call
@@ -155,8 +156,8 @@ class GitDeploy(BaseHTTPRequestHandler):
         """
         Check client ip address is valid github server
         """
-        remote_addr = self.client_address[0]
-        return remote_addr in self.get_config()['allow_hosts']
+        remote_addr = self.client_address[0]	
+        return any (ipaddress.ip_address(remote_addr) in ipaddress.ip_network(network) for network in self.get_config()['allow_hosts'])
 
     def parse_repository(self):
         """
