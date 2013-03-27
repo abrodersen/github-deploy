@@ -19,7 +19,7 @@ import cgi
 import pwd
 import ipaddress
 
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from subprocess import call
 import subprocess
 
@@ -66,7 +66,7 @@ def log(message):
 
     logger.info(message)
     if GitDeploy.verbose:
-        print message
+        print(message)
 
 
 def check_pid(pid):
@@ -232,7 +232,7 @@ class GitDeploy(BaseHTTPRequestHandler):
 if __name__ == '__main__':
     # check if root
     if os.geteuid() != 0:
-        print >> sys.stderr, "You aren't root. Goodbye."
+        print("You aren't root. Goodbye.", file=sys.stderr)
         sys.exit()
 
     try:
@@ -243,7 +243,7 @@ if __name__ == '__main__':
         for arg in sys.argv:
             if arg == '-v':
                 GitDeploy.verbose = True
-                print "started"
+                print ("started")
 
             if arg.find('--config=') == 0:
                 GitDeploy.CONFIG_FILEPATH = arg.replace("--config=", "")
@@ -268,7 +268,7 @@ if __name__ == '__main__':
                 f.close()
                 if pid and check_pid(pid):
                     # running
-                    print >> sys.stderr, "Already running"
+                    print ("Already running", file=sys.stderr)
                     sys.exit()
                 else:
                     os.path.unlink(pid_file)
@@ -289,7 +289,7 @@ if __name__ == '__main__':
         log("Server started...")
         server.serve_forever()
 
-    except Exception, e:
+    except Exception as e:
         if e:
             log(e)
 
